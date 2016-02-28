@@ -1,21 +1,66 @@
 'use strict';
+
 import React, {
-  StyleSheet,
-  Text,
-  View
+View,
+Text,
+StyleSheet
 } from 'react-native';
 
+import DDPClient from 'ddp-client';
+let ddpClient = new DDPClient({
+  host: 'localhost',
+  port: '3000'
+});
+
 export default React.createClass({
+  getInitialState() {
+    return {
+      connected: false,
+      tasks: {}
+    }
+  },
+
+  componentDidMount() {
+    ddpClient.connect((err, wasReconnect) => {
+      let connected = true;
+      if (err) connected = false;
+
+      this.setState({ connected: connected });
+      this.makeSubscription();
+      this.observeTasks();
+    });
+  },
+
+  observeTasks() {
+    let observer = ddpClient.observe("tasks");
+    observer.added = (id) => {
+      this.setState({tasks: ddpClient.collections.tasks.items})
+    }
+    observer.changed = (id, oldFields, clearedFields, newFields) => {
+      this.setState({tasks: ddpClient.collections.tasks.items})
+    }
+    observer.removed = (id, oldValue) => {
+      this.setState({tasks: ddpClient.collections.tasks.items})
+    }
+  },
+
+  makeSubscription() {
+    ddpClient.subscribe("tasks", [], () => {
+      this.setState({tasks: ddpClient.collections.tasks.items});
+    });
+  },
+
   render() {
+    let count = Object.keys(this.state.tasks).length;
     return (
       <View style={styles.container}>
         <View style={styles.center}>
-          <Text>Hello !</Text>
+          <Text>tasks: {count}</Text>
         </View>
       </View>
     );
   }
-})
+});
 
 const styles = StyleSheet.create({
   container: {
