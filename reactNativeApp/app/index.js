@@ -34,19 +34,19 @@ export default React.createClass({
   observeTasks() {
     let observer = ddpClient.observe("tasks");
     observer.added = (id) => {
-      this.setState({tasks: ddpClient.collections.tasks.items})
+      this.setState({tasks: ddpClient.collections.tasks})
     }
     observer.changed = (id, oldFields, clearedFields, newFields) => {
-      this.setState({tasks: ddpClient.collections.tasks.items})
+      this.setState({tasks: ddpClient.collections.tasks})
     }
     observer.removed = (id, oldValue) => {
-      this.setState({tasks: ddpClient.collections.tasks.items})
+      this.setState({tasks: ddpClient.collections.tasks})
     }
   },
 
   makeSubscription() {
     ddpClient.subscribe("tasks", [], () => {
-      this.setState({tasks: ddpClient.collections.tasks.items});
+      this.setState({tasks: ddpClient.collections.tasks});
     });
   },
 
@@ -55,7 +55,7 @@ export default React.createClass({
     return (
       <View style={styles.container}>
         <View style={styles.center}>
-          <Text>tasks: {count}</Text>
+          <Text>Count: {count}</Text>
         </View>
       </View>
     );
