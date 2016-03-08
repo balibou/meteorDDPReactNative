@@ -1,5 +1,8 @@
 # meteorReactNative
 
+## Preview
+![](meteorReactNative.gif)
+
 ## Getting started
 
 * cd meteorApp && meteor
